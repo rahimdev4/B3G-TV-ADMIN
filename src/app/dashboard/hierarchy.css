@@ -1,0 +1,1 @@
+.dual-forms{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}.hierarchy{margin-top:16px}.hierarchy>.record{margin-top:9px}.episode-list{display:grid;gap:7px;border-top:1px solid var(--line);padding:12px 16px;background:#06111c}.episode-record{background:#0b1d2d}@media(max-width:900px){.dual-forms{grid-template-columns:1fr}}
