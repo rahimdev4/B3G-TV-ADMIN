@@ -1,10 +1,12 @@
 import { publishTitle, unpublishTitle } from "@/app/actions/publishing";
 import { requireAdmin } from "@/lib/auth";
+import { databaseErrorMessages } from "@/lib/database-errors";
 
 type Query = Promise<{ error?: string; success?: string; ready?: string }>;
 const errors: Record<string, string> = {
+  ...databaseErrorMessages,
   publish_confirmation: "Type PUBLISH to confirm.",
-  publish_failed: "Publishing failed.",
+  publish_failed: "Publishing failed because of an unexpected database error. Please try again.",
   media_not_ready: "Assigned trailer or main video is still processing. Open Media, then Preview & status to synchronize Cloudflare readiness.",
   main_video_required: "A movie requires an assigned main video.",
   title_not_ready: "Set the title workflow to Ready before publishing.",

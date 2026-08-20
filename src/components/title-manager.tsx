@@ -1,9 +1,10 @@
 import { archiveTitle, createTitle, updateTitle } from "@/app/actions/titles";
 import { requireAdmin } from "@/lib/auth";
 import { UpdatedAt } from "@/components/updated-at";
+import { databaseErrorMessages } from "@/lib/database-errors";
 
 type ContentType = "movie" | "show";
-const errors: Record<string, string> = { invalid_content: "Title and slug are required.", duplicate_slug: "That slug is already used by staged content.", save_failed: "Content could not be saved.", show_has_seasons: "Archive the staged seasons first.", delete_failed: "Content could not be archived.", publish_confirmation: "Type PUBLISH to confirm.", publish_failed: "Publishing failed. The title and required media must be Ready.", unpublish_confirmation: "Type UNPUBLISH to confirm.", unpublish_failed: "Unpublishing failed." };
+const errors: Record<string, string> = { ...databaseErrorMessages, invalid_content: "Title and slug are required.", duplicate_slug: "That slug is already used by staged content.", save_failed: "Content could not be saved because of an unexpected database error. Please try again.", show_has_seasons: "Archive the staged seasons first.", delete_failed: "Content could not be archived.", publish_confirmation: "Type PUBLISH to confirm.", publish_failed: "Publishing failed because of an unexpected database error. Please try again.", unpublish_confirmation: "Type UNPUBLISH to confirm.", unpublish_failed: "Unpublishing failed." };
 const successes: Record<string, string> = { created: "Draft created.", updated: "Changes saved.", archived: "Content archived safely.", published: "Published to the new app catalog only.", unpublished: "Removed from the new app catalog." };
 
 function MediaOptions({ assets, kind }: { assets: Array<{ id: string; filename: string | null; kind: string }>; kind: "image" | "video" | "trailer" }) {

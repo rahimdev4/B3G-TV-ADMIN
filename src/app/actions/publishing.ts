@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
 import { cloudflareServerEnv } from "@/lib/env";
+import { databaseErrorCode } from "@/lib/database-errors";
 
 const value = (form: FormData, key: string) => String(form.get(key) ?? "").trim();
 const publishingPath = "/dashboard/publishing";
@@ -33,12 +34,12 @@ export async function publishTitle(formData: FormData) {
   const { error } = await supabase.rpc("cms_publish_title", { p_title_id:id });
   if (error) {
     const message=error.message.toLowerCase();
-    const code=message.includes("assigned title media") ? "media_not_ready" : message.includes("main video") ? "main_video_required" : message.includes("must be ready") ? "title_not_ready" : "publish_failed";
+    const code=message.includes("assigned title media") ? "media_not_ready" : message.includes("main video") ? "main_video_required" : message.includes("must be ready") ? "title_not_ready" : databaseErrorCode(error, "publish_failed");
     redirect(`${path}?error=${code}`);
   }
   const {data:source}=await supabase.from("cms_titles").select("is_featured").eq("id",id).single();
   const {error:featuredError}=await supabase.from("catalog_titles").update({is_featured:source?.is_featured ?? false}).eq("id",id);
-  if(featuredError) redirect(`${path}?error=publish_failed`);
+  if(featuredError) redirect(`${path}?error=${databaseErrorCode(featuredError, "publish_failed")}`);
   revalidatePath(path); redirect(`${path}?success=published`);
 }
 
@@ -47,6 +48,6 @@ export async function unpublishTitle(formData: FormData) {
   if (!id || value(formData,"publish_confirmation") !== "UNPUBLISH") redirect(`${path}?error=unpublish_confirmation`);
   const { supabase } = await requireAdmin();
   const { error } = await supabase.rpc("cms_unpublish_title", { p_title_id:id });
-  if (error) redirect(`${path}?error=unpublish_failed`);
+  if (error) redirect(`${path}?error=${databaseErrorCode(error, "unpublish_failed")}`);
   revalidatePath(path); redirect(`${path}?success=unpublished`);
 }

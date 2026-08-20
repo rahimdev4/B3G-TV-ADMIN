@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
+import { databaseErrorCode } from "@/lib/database-errors";
 import { toSlug } from "@/lib/slug";
 
 const value = (form: FormData, key: string) => String(form.get(key) ?? "").trim();
@@ -23,7 +24,7 @@ export async function createTitle(formData: FormData) {
   const data = payload(formData);
   const path = routeFor(data.content_type);
   const { error } = await supabase.from("cms_titles").insert(data);
-  if (error) redirect(`${path}?error=${error.code === "23505" ? "duplicate_slug" : "save_failed"}`);
+  if (error) redirect(`${path}?error=${error.code === "23505" ? "duplicate_slug" : databaseErrorCode(error)}`);
   revalidatePath(path); redirect(`${path}?success=created`);
 }
 
@@ -33,7 +34,7 @@ export async function updateTitle(formData: FormData) {
   const data = payload(formData);
   const path = routeFor(data.content_type);
   const { error } = await supabase.from("cms_titles").update(data).eq("id", id).eq("content_type", data.content_type).is("deleted_at", null);
-  if (error) redirect(`${path}?error=${error.code === "23505" ? "duplicate_slug" : "save_failed"}`);
+  if (error) redirect(`${path}?error=${error.code === "23505" ? "duplicate_slug" : databaseErrorCode(error)}`);
   revalidatePath(path); redirect(`${path}?success=updated`);
 }
 

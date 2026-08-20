@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
+import { databaseErrorCode } from "@/lib/database-errors";
 import { toSlug } from "@/lib/slug";
 
 function text(formData: FormData, key: string) {
@@ -21,7 +22,7 @@ function categoryPayload(formData: FormData) {
 export async function createCategory(formData: FormData) {
   const { supabase } = await requireAdmin();
   const { error } = await supabase.from("cms_categories").insert(categoryPayload(formData));
-  if (error) redirect(`/dashboard/categories?error=${error.code === "23505" ? "duplicate_slug" : "save_failed"}`);
+  if (error) redirect(`/dashboard/categories?error=${error.code === "23505" ? "duplicate_slug" : databaseErrorCode(error)}`);
   revalidatePath("/dashboard/categories");
   redirect("/dashboard/categories?success=created");
 }
@@ -31,7 +32,7 @@ export async function updateCategory(formData: FormData) {
   const id = text(formData, "id");
   if (!id) redirect("/dashboard/categories?error=invalid_category");
   const { error } = await supabase.from("cms_categories").update(categoryPayload(formData)).eq("id", id).is("deleted_at", null);
-  if (error) redirect(`/dashboard/categories?error=${error.code === "23505" ? "duplicate_slug" : "save_failed"}`);
+  if (error) redirect(`/dashboard/categories?error=${error.code === "23505" ? "duplicate_slug" : databaseErrorCode(error)}`);
   revalidatePath("/dashboard/categories");
   redirect("/dashboard/categories?success=updated");
 }
@@ -41,7 +42,7 @@ export async function toggleCategory(formData: FormData) {
   const id = text(formData, "id");
   const isActive = text(formData, "is_active") === "true";
   const { error } = await supabase.from("cms_categories").update({ is_active: !isActive }).eq("id", id).is("deleted_at", null);
-  if (error) redirect("/dashboard/categories?error=save_failed");
+  if (error) redirect(`/dashboard/categories?error=${databaseErrorCode(error)}`);
   revalidatePath("/dashboard/categories");
 }
 

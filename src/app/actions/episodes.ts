@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
+import { databaseErrorCode } from "@/lib/database-errors";
 import { toSlug } from "@/lib/slug";
 
 const path = "/dashboard/episodes";
@@ -25,14 +26,14 @@ export async function createSeason(formData: FormData) {
   const { data: show } = await supabase.from("cms_titles").select("id").eq("id", data.show_id).eq("content_type", "show").is("deleted_at", null).maybeSingle();
   if (!show) redirect(`${path}?error=invalid_show`);
   const { error } = await supabase.from("cms_seasons").insert(data);
-  if (error) redirect(`${path}?error=${error.code === "23505" ? "duplicate_season" : "save_failed"}`);
+  if (error) redirect(`${path}?error=${error.code === "23505" ? "duplicate_season" : databaseErrorCode(error)}`);
   revalidatePath(path); redirect(`${path}?success=season_created`);
 }
 
 export async function updateSeason(formData: FormData) {
   const { supabase } = await requireAdmin(); const data = seasonPayload(formData);
   const { error } = await supabase.from("cms_seasons").update(data).eq("id", value(formData, "id")).is("deleted_at", null);
-  if (error) redirect(`${path}?error=${error.code === "23505" ? "duplicate_season" : "save_failed"}`);
+  if (error) redirect(`${path}?error=${error.code === "23505" ? "duplicate_season" : databaseErrorCode(error)}`);
   revalidatePath(path); redirect(`${path}?success=season_updated`);
 }
 
@@ -50,7 +51,7 @@ export async function createEpisode(formData: FormData) {
   const { data: season } = await supabase.from("cms_seasons").select("id").eq("id", data.season_id).eq("show_id", data.show_id).is("deleted_at", null).maybeSingle();
   if (!season) redirect(`${path}?error=season_show_mismatch`);
   const { error } = await supabase.from("cms_episodes").insert(data);
-  if (error) redirect(`${path}?error=${error.code === "23505" ? "duplicate_episode" : "save_failed"}`);
+  if (error) redirect(`${path}?error=${error.code === "23505" ? "duplicate_episode" : databaseErrorCode(error)}`);
   revalidatePath(path); revalidatePath("/dashboard/publishing");
   redirect(data.workflow_status === "ready" ? `/dashboard/publishing?ready=${data.show_id}` : `${path}?success=episode_created`);
 }
@@ -60,7 +61,7 @@ export async function updateEpisode(formData: FormData) {
   const { data: season } = await supabase.from("cms_seasons").select("id").eq("id", data.season_id).eq("show_id", data.show_id).is("deleted_at", null).maybeSingle();
   if (!season) redirect(`${path}?error=season_show_mismatch`);
   const { error } = await supabase.from("cms_episodes").update(data).eq("id", value(formData, "id")).is("deleted_at", null);
-  if (error) redirect(`${path}?error=${error.code === "23505" ? "duplicate_episode" : "save_failed"}`);
+  if (error) redirect(`${path}?error=${error.code === "23505" ? "duplicate_episode" : databaseErrorCode(error)}`);
   revalidatePath(path); revalidatePath("/dashboard/publishing");
   redirect(data.workflow_status === "ready" ? `/dashboard/publishing?ready=${data.show_id}` : `${path}?success=episode_updated`);
 }

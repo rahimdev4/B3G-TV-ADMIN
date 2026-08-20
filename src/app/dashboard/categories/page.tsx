@@ -1,8 +1,9 @@
 import { archiveCategory, createCategory, toggleCategory, updateCategory } from "@/app/actions/categories";
 import { requireAdmin } from "@/lib/auth";
 import { UpdatedAt } from "@/components/updated-at";
+import { databaseErrorMessages } from "@/lib/database-errors";
 
-const errors: Record<string, string> = { invalid_category: "Enter a valid category name.", duplicate_slug: "That category name or slug already exists.", save_failed: "Category could not be saved.", category_in_use: "This category is assigned to staged content and cannot be archived.", delete_failed: "Category could not be archived." };
+const errors: Record<string, string> = { ...databaseErrorMessages, invalid_category: "Enter a valid category name.", duplicate_slug: "That category name or slug already exists.", save_failed: "Category could not be saved because of an unexpected database error. Please try again.", category_in_use: "This category is assigned to staged content and cannot be archived.", delete_failed: "Category could not be archived." };
 const successes: Record<string, string> = { created: "Category created.", updated: "Category updated.", archived: "Category archived safely." };
 
 export default async function CategoriesPage({ searchParams }: { searchParams: Promise<{ error?: string; success?: string }> }) {

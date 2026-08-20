@@ -1,8 +1,9 @@
 import { archiveEpisode, archiveSeason, createEpisode, createSeason, updateEpisode, updateSeason } from "@/app/actions/episodes";
 import { requireAdmin } from "@/lib/auth";
 import { UpdatedAt } from "@/components/updated-at";
+import { databaseErrorMessages } from "@/lib/database-errors";
 
-const errors: Record<string, string> = { invalid_season: "Choose a show and valid season number.", invalid_show: "The selected staged show is unavailable.", duplicate_season: "That season number already exists for this show.", invalid_episode: "Show, season, episode number, and title are required.", season_show_mismatch: "The selected season does not belong to that show.", duplicate_episode: "That episode number or slug already exists.", season_has_episodes: "Archive the episodes in this season first.", save_failed: "Could not save the staged record.", delete_failed: "Could not archive the staged record." };
+const errors: Record<string, string> = { ...databaseErrorMessages, invalid_season: "Choose a show and valid season number.", invalid_show: "The selected staged show is unavailable.", duplicate_season: "That season number already exists for this show.", invalid_episode: "Show, season, episode number, and title are required.", season_show_mismatch: "The selected season does not belong to that show.", duplicate_episode: "That episode number or slug already exists.", season_has_episodes: "Archive the episodes in this season first.", save_failed: "Could not save the staged record because of an unexpected database error. Please try again.", delete_failed: "Could not archive the staged record." };
 
 export default async function EpisodesPage({ searchParams }: { searchParams: Promise<{ error?: string; success?: string }> }) {
   const query = await searchParams; const { supabase } = await requireAdmin();
