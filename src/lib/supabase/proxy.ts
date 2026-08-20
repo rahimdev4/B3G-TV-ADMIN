@@ -22,8 +22,15 @@ export async function updateSession(request: NextRequest) {
   const isLogin = request.nextUrl.pathname === "/login";
   const isProtected = request.nextUrl.pathname.startsWith("/dashboard");
 
-  if (isProtected && (!user || !isAllowedAdmin(user.email))) {
-    if (user) await supabase.auth.signOut();
+  if (isProtected && !user) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+
+  if (isProtected && user && !isAllowedAdmin(user.email)) {
+    await supabase.auth.signOut();
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("error", "unauthorized");
