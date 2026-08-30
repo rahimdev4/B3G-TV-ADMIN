@@ -19,6 +19,7 @@ import "./form-ux.css";
 const nav = [
   ["Overview", "/dashboard"],
   ["Legacy App (Live)", "/dashboard/legacy"],
+  ["Import Legacy Drafts", "/dashboard/import-legacy"],
   ["Categories", "/dashboard/categories"],
   ["Media", "/dashboard/media"],
   ["Live TV", "/dashboard/live-tv"],
