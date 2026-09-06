@@ -1,0 +1,36 @@
+.page {
+  min-height: 100vh;
+  padding: 48px 20px;
+  color: #f5f7fa;
+  background: radial-gradient(circle at top, #172334 0, #080b10 48%, #050608 100%);
+}
+
+.card {
+  width: min(720px, 100%);
+  margin: 0 auto;
+  padding: 40px;
+  border: 1px solid #263243;
+  border-radius: 24px;
+  background: rgba(14, 19, 27, 0.96);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+}
+
+.brand { color: #3fa9f5; font-size: 18px; font-weight: 900; letter-spacing: 0.08em; }
+.eyebrow { margin: 28px 0 8px; color: #8190a5; font-size: 12px; font-weight: 800; letter-spacing: 0.16em; }
+.card h1 { margin: 0; font-size: clamp(32px, 6vw, 48px); line-height: 1.05; }
+.card h2 { margin: 32px 0 12px; font-size: 20px; }
+.intro, .card li, .footer { color: #b7c0ce; line-height: 1.65; }
+.card ul { padding-left: 22px; }
+.notice, .warning { margin: 24px 0; padding: 18px; border-radius: 14px; background: #111a25; border: 1px solid #27374b; }
+.warning { border-color: #745622; background: #211a0d; }
+.notice p, .warning p { margin: 7px 0 0; color: #c5ccd6; line-height: 1.55; }
+.primary { display: block; padding: 15px 20px; border-radius: 12px; color: #04111a; background: #3fa9f5; font-weight: 800; text-align: center; text-decoration: none; }
+.primary:hover { background: #74c5ff; }
+.address { color: #8190a5; font-size: 13px; text-align: center; }
+.footer { margin-top: 32px; font-size: 13px; }
+.footer a { color: #61b9f8; }
+
+@media (max-width: 560px) {
+  .page { padding: 20px 12px; }
+  .card { padding: 26px 20px; border-radius: 18px; }
+}
