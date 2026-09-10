@@ -24,7 +24,19 @@ export function StreamUploader({ defaultKind = "video" }: { defaultKind?: "video
       if (!preparedResponse.ok || !prepared.uid || !prepared.uploadURL || !prepared.hlsURL) throw new Error(prepared.error ?? "Could not prepare Stream upload.");
       setMessage("Uploading directly to Cloudflare Stream…");
       await new Promise<void>((resolve, reject) => {
-        new tus.Upload(file, { uploadUrl: prepared.uploadURL, uploadSize: file.size, retryDelays: [0, 1000, 3000, 5000, 10000], removeFingerprintOnSuccess: true, onError: reject, onProgress: (sent, total) => setProgress(Math.round((sent / total) * 100)), onSuccess: () => resolve() }).start();
+        new tus.Upload(file, {
+          uploadUrl: prepared.uploadURL,
+          uploadSize: file.size,
+          // Cloudflare commits each completed chunk. Without this option,
+          // tus-js-client sends the entire movie as one request and a network
+          // interruption can make the visible progress restart from zero.
+          chunkSize: 50 * 1024 * 1024,
+          retryDelays: [0, 3000, 5000, 10000, 20000],
+          removeFingerprintOnSuccess: true,
+          onError: reject,
+          onProgress: (sent, total) => setProgress(Math.round((sent / total) * 100)),
+          onSuccess: () => resolve(),
+        }).start();
       });
       setMessage("Saving staged media record…");
       const savedResponse = await fetch("/api/media/assets", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind, providerId: prepared.uid, publicUrl: prepared.hlsURL, thumbnailUrl: prepared.thumbnailURL, filename: file.name, mimeType: file.type, sizeBytes: file.size, status: "processing" }) });
