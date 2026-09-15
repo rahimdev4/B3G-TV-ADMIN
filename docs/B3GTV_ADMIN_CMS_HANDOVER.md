@@ -101,7 +101,7 @@ From **Movies**, the administrator can:
 - Control sort order
 - Archive safely
 
-A movie must have its required main video ready before it can be published.
+A movie can be published with either a Ready trailer or a Ready main video. A trailer-only movie appears in Catalog V2 as "Full movie coming soon"; its trailer is free to preview even when the movie is Premium. Assign the full movie later, wait for it to become Ready, save the movie, and republish it to update Catalog V2. This requires the additive `202609150001_catalog_trailer_only_movies_NOT_APPLIED.sql` migration to be applied first.
 
 ## 7. Shows, seasons and episodes
 
@@ -139,7 +139,7 @@ Legacy featured content remains independent and is managed from **Legacy App (Li
 Publishing copies a validated ready record from private `cms_*` staging tables into public published-only `catalog_*` tables.
 
 - Type `PUBLISH` exactly when asked.
-- Required media must be ready.
+- Assigned media must be ready. Movies need a playable Ready trailer or Ready main video; a full movie is not required for a trailer-only coming-soon title.
 - Shows publish their ready seasons and episodes together.
 - Repeated publishing updates the same catalog records and does not create duplicates.
 
@@ -297,4 +297,3 @@ Do not delete legacy rows, change the main-domain DNS records or remove Cloudfla
 The Phase 3 Admin CMS includes the agreed foundation, content management, Cloudflare integration, publishing workflow, mobile-app catalog connection, production deployment, safety controls and client-tested functionality.
 
 The administrator has completed acceptance testing. Future additions such as subscriber management, analytics, referral tracking, multi-admin roles, payments, DRM, bulk import/export and full audit logging remain outside this order's scope.
-

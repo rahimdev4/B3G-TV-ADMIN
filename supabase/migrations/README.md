@@ -24,3 +24,9 @@ Legacy App Manager exposes mutation forms.
 `202608180002_legacy_live_tv_admin_update.sql` was also applied on 2026-08-18.
 It permits the allowlisted admin to update only `app_config.live_tv_url`; it
 does not grant INSERT or DELETE access.
+
+`202609150001_catalog_trailer_only_movies_NOT_APPLIED.sql` is **not applied**.
+It replaces only the admin-only `cms_publish_title` function to permit Catalog
+V2 movies with a Ready trailer and no main video. It does not change tables,
+existing rows, or the legacy `shows`/`videos` catalog. Apply this SQL in
+Supabase before trying to publish trailer-only movies from the production CMS.

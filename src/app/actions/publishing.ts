@@ -34,7 +34,7 @@ export async function publishTitle(formData: FormData) {
   const { error } = await supabase.rpc("cms_publish_title", { p_title_id:id });
   if (error) {
     const message=error.message.toLowerCase();
-    const code=message.includes("assigned title media") ? "media_not_ready" : message.includes("main video") ? "main_video_required" : message.includes("must be ready") ? "title_not_ready" : databaseErrorCode(error, "publish_failed");
+    const code=message.includes("assigned title media") ? "media_not_ready" : message.includes("trailer or main video") ? "playable_media_required" : message.includes("main video") ? "main_video_required" : message.includes("must be ready") ? "title_not_ready" : databaseErrorCode(error, "publish_failed");
     redirect(`${path}?error=${code}`);
   }
   const {data:source}=await supabase.from("cms_titles").select("is_featured").eq("id",id).single();
